@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { articlesActions, commentsActions, selectors } from "./store";
+import { articlesSlice, commentsSlice, selectors } from "./store";
 
 import { CommentList } from "./comment-list";
 export const ArticleList = () => {
@@ -7,31 +7,34 @@ export const ArticleList = () => {
   const articles = useSelector(selectors.getAllArticles);
 
   const handleAddArticle = () => {
-    const articleId = "article3";
+    const articleId = String(Date.now());
     dispatch(
-      articlesActions.addArticle({
+      articlesSlice.actions.addEntity({
         id: articleId,
-        title: "New Article",
+        title: `New Article-${new Date()}`,
         content: "This is a new article.",
+        commentIds: [],
       })
     );
   };
 
   const handleDeleteArticle = (id: string) => {
-    dispatch(articlesActions.deleteArticle({ id }));
+    dispatch(articlesSlice.actions.deleteEntity(id));
   };
 
   const handleAddComment = (articleId: string) => {
-    const commentId = "comment1";
+    const commentId = String(Date.now());
     dispatch(
-      commentsActions.addComment({
+      commentsSlice.actions.addEntity({
         id: commentId,
-        content: "Great article!",
+        content: `Great article!-${new Date()}`,
         author: "user1",
         articleId,
       })
     );
-    dispatch(articlesActions.addCommentToArticle({ articleId, commentId }));
+    dispatch(
+      articlesSlice.actions.addCommentToArticle({ articleId, commentId })
+    );
   };
 
   return (

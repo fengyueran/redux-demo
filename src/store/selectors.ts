@@ -1,21 +1,22 @@
 import { createSelector } from "reselect";
+
 import { RootState } from "./store";
 
-export const getAllArticles = (state: RootState) =>
-  state.articles.allIds.map((id) => state.articles.byId[id]);
+const getAllIds = (state: RootState) => state.articles.allIds;
+const getArticlesById = (state: RootState) => state.articles.byId;
 
-// 获取文章详情
-export const getArticleById = (state: RootState, articleId: string) =>
-  state.articles.byId[articleId];
+export const getAllArticles = createSelector(
+  [getAllIds, getArticlesById],
+  (allIds, byId) => allIds.map((id: string) => byId[id])
+);
 
-// 获取评论详情
-export const getCommentsById = (state: RootState, commentId: string) =>
-  state.comments.byId[commentId];
+export const getAllCommentIds = (state: RootState) => state.comments.allIds;
 
-// 获取文章的所有评论
-//getArticleComments的参数和createSelector第一个参数数组中第一个元素的输入一样，也就是和getArticleById一样
-export const getArticleComments = createSelector(
-  [getArticleById, (state) => state.comments.byId],
-  (article, commentsById) =>
-    article.commentIds.map((commentId) => commentsById[commentId])
+const getCommentsById = (state: RootState) => state.comments.byId;
+
+const getCommentId = (_state: RootState, id: string) => id;
+
+export const getCommentById = createSelector(
+  [getCommentsById, getCommentId],
+  (byId, id) => byId[id]
 );

@@ -1,10 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { articlesReducer } from "./articles-slice";
-import { commentsReducer } from "./comments-slice";
+import { articlesSlice } from "./articles-slice";
+import { commentsSlice } from "./comments-slice";
 
 const rootReducer = combineReducers({
-  articles: articlesReducer,
-  comments: commentsReducer,
+  articles: articlesSlice.reducer,
+  comments: commentsSlice.reducer,
 });
 
 export const store = configureStore({

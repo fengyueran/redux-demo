@@ -1,34 +1,49 @@
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectors, commentsActions, articlesActions } from "./store";
+import { selectors, commentsSlice, articlesSlice, RootState } from "./store";
 
+interface CommentProps {
+  articleId: string;
+  commentId: string;
+}
+const Comment = React.memo((props: CommentProps) => {
+  const { articleId, commentId } = props;
+  const dispatch = useDispatch();
+
+  const comment = useSelector((state: RootState) =>
+    selectors.getCommentById(state, commentId)
+  );
+
+  const handleDelete = (commentId: string) => {
+    dispatch(
+      articlesSlice.actions.removeCommentFromArticle({ articleId, commentId })
+    );
+    dispatch(commentsSlice.actions.deleteEntity(commentId));
+  };
+
+  return (
+    <div>
+      <p>{comment.content}</p>
+      <button onClick={() => handleDelete(comment.id)}>Delete Comment</button>
+    </div>
+  );
+});
 interface Props {
   articleId: string;
 }
 export const CommentList = (props: Props) => {
   const { articleId } = props;
-  const dispatch = useDispatch();
-  const comments = useSelector((state) =>
-    selectors.getArticleComments(state, articleId)
-  );
-
-  const handleDelete = (commentId: string) => {
-    dispatch(
-      articlesActions.removeCommentFromArticle({ articleId, commentId })
-    );
-    dispatch(commentsActions.deleteComment({ id: commentId }));
-  };
+  const commentIds = useSelector(selectors.getAllCommentIds);
 
   return (
     <div>
-      {comments?.length
-        ? comments.map((comment) => (
-            <div key={comment.id}>
-              <p>{comment.content}</p>
-              <button onClick={() => handleDelete(comment.id)}>
-                {" "}
-                Delete Comment
-              </button>
-            </div>
+      {commentIds?.length
+        ? commentIds.map((commentId) => (
+            <Comment
+              key={commentId}
+              articleId={articleId}
+              commentId={commentId}
+            />
           ))
         : null}
     </div>
